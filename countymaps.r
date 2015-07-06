@@ -10,7 +10,7 @@ library(maps)
 library(rgdal)
 library(dplyr)
 
-setwd("~/Dropbox/LFO/r")
+setwd("~/state-descriptives")
 
 dat1<-read.csv("nhgis0014_ds201_20135_2013_county.csv", head=TRUE)
 dat1<-dat1[dat1$STATE=="Washington",]
@@ -20,7 +20,6 @@ dat1$COUNTY<-tolower(dat1$COUNTY)
 names(dat1)[9]<-"id"
 dat1$id<-as.character(strsplit(dat1$id, " county"))
 
-set.seed(47)
 county_map <- map_data("county", "washington")
 names(county_map)[5:6] <- c("state", "id")
 
@@ -85,52 +84,3 @@ map.wa.unemp <- ggplot(dat1) +
     panel.border = element_blank(), panel.background=element_blank())
 
 
-
-county<-map_data("county", "washington")
-names(county)[5:6] <- c("state", "id")
-county$COUNTY<-paste(county$COUNTY, "county")
-
-
-dat1<-read.csv("nhgis0014_ds201_20135_2013_county.csv", head=TRUE)
-dat1<-dat1[dat1$STATE=="Washington",]
-
-dat1$STATE<-tolower(dat1$STATE)
-dat1$COUNTY<-tolower(dat1$COUNTY)
-names(dat1)[9]<-"id"
-
-#m<-merge(dat1, county, by="COUNTY")
-
-map1 <- ggplot(dat1) +
-  geom_map(map = county, aes(map_id = id))
-  	, 
-            colour = "black") + coord_map() +
-  expand_limits(x = m$long, y = m$lat)
-
-
-#shp<-readOGR("US_county_2013.shp", "US_county_2013")
-#shp<-fortify(shp, region="GISJOIN")
-names(dat1)[1]<-"id"
-plotData<-merge(shp, dat1, by="id")
-
-
-
-p<-ggplot()+
-	geom_polygon(data=plotData, 
-		aes(x=long, y=lat, group=group, fill=NULL),
-		color="black", size=0.25)
-
-#data=dat1, 
-		#aes(map_id=GISJOIN, fill=UEZE003),
-
-
-county_map <- map_data("county", "washington")
-names(county_map)[5:6] <- c("state", "id")
-
-wadat<-
-
-countyData <- data.frame(id = unique(county_map$id), value = rnorm(39)) 
-
-map1 <- ggplot(countyData) +
-  geom_map( map = county_map, aes(map_id = id,fill = value), 
-            colour = "black") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)
