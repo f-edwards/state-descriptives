@@ -1,7 +1,5 @@
 ##### motivates selection - provide context - political data? voteshare -
 
-
-
 rm(list=ls())
 library(rgdal)
 library(ggplot2)
@@ -84,3 +82,4 @@ map.wa.unemp <- ggplot(dat1) +
     panel.border = element_blank(), panel.background=element_blank())
 
 
+ggsave(filename="WApov.pdf", plot=map.wa.pov)
