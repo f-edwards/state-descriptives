@@ -1,0 +1,369 @@
+--------------------------------------------------------------------------------
+Codebook for NHGIS data file 'nhgis0014_ds201_20135_2013_county'
+--------------------------------------------------------------------------------
+ 
+Contents
+    - Data Summary
+    - Data Dictionary
+    - Citation and Use
+ 
+Additional documentation on NHGIS data sources is available at: 
+    https://www.nhgis.org/documentation/tabular-data 
+ 
+--------------------------------------------------------------------------------
+Data Summary
+--------------------------------------------------------------------------------
+ 
+Year:             2009-2013
+Geographic level: County (by State)
+Dataset:          2013 American Community Survey: 5-Year Data [2009-2013, Block Groups & Larger Areas]
+   NHGIS code:    2009_2013_ACS5a
+   NHGIS ID:      ds201
+Breakdown(s):     Geographic Subarea:
+                     Total area (00)
+Data type(s):     (E) Estimates
+                  (M) Margins of error
+ 
+Tables:
+ 
+1. Total Population
+   Universe:    Total population
+   Source code: B01003
+   NHGIS code:  UEP
+ 
+2. Race
+   Universe:    Total population
+   Source code: B02001
+   NHGIS code:  UEQ
+ 
+3. Hispanic or Latino Origin
+   Universe:    Total population
+   Source code: B03003
+   NHGIS code:  UEZ
+ 
+4. Educational Attainment for the Population 25 Years and Over
+   Universe:    Population 25 years and over
+   Source code: B15003
+   NHGIS code:  UGS
+ 
+5. Ratio of Income to Poverty Level in the Past 12 Months
+   Universe:    Population for whom poverty status is determined
+   Source code: C17002
+   NHGIS code:  UG7
+ 
+6. Gini Index of Income Inequality
+   Universe:    Households
+   Source code: B19083
+   NHGIS code:  UIL
+ 
+7. Per Capita Income in the Past 12 Months (in 2013 Inflation-Adjusted Dollars)
+   Universe:    Total population
+   Source code: B19301
+   NHGIS code:  UJA
+ 
+8. Employment Status for the Population 16 Years and Over
+   Universe:    Population 16 years and over
+   Source code: B23025
+   NHGIS code:  UJ8
+ 
+--------------------------------------------------------------------------------
+Data Dictionary
+--------------------------------------------------------------------------------
+ 
+Context Fields 
+        GISJOIN:     GIS Join Match Code
+        YEAR:        Data File Year
+        REGION:      Region Name
+        REGIONA:     Region Code
+        DIVISION:    Division Name
+        DIVISIONA:   Division Code
+        STATE:       State Name
+        STATEA:      State Code
+        COUNTY:      County Name
+        COUNTYA:     County Code
+        COUSUB:      County Subdivision Name
+        COUSUBA:     County Subdivision Code
+        PLACE:       Place Name
+        PLACEA:      Place Code
+        TRACTA:      Census Tract Code
+        BLKGRPA:     Block Group Code
+        CONCITA:     Consolidated City Code
+        AIANHH:      American Indian Area/Alaska Native Area/Hawaiian Home Land Name
+        AIANHHA:     American Indian Area/Alaska Native Area/Hawaiian Home Land Code
+        RES_ONLYA:   American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only) Code
+        TRUSTA:      American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land Code
+        AITSCEA:     Tribal Subdivision/Remainder Code
+        ANRCA:       Alaska Native Regional Corporation Code
+        CBSA:        Metropolitan Statistical Area/Micropolitan Statistical Area Name
+        CBSAA:       Metropolitan Statistical Area/Micropolitan Statistical Area Code
+        CSA:         Combined Statistical Area Name
+        CSAA:        Combined Statistical Area Code
+        METDIV:      Metropolitan Division Name
+        METDIVA:     Metropolitan Division Code
+        NECTA:       New England City and Town Area Name
+        NECTAA:      New England City and Town Area Code
+        CNECTA:      Combined New England City and Town Area Name
+        CNECTAA:     Combined New England City and Town Area Code
+        NECTADIV:    New England City and Town Area Division Name
+        NECTADIVA:   New England City and Town Area Division Code
+        UA:          Urban Area Name
+        UAA:         Urban Area Code
+        CDCURRA:     Congressional District (2013-2015, 113th Congress) Code
+        SLDUA:       State Legislative District (Upper Chamber) Code
+        SLDLA:       State Legislative District (Lower Chamber) Code
+        ZCTA5A:      5-Digit ZIP Code Tabulation Area Code
+        SUBMCDA:     Subminor Civil Division Code
+        SDELM:       School District (Elementary)/Remainder Name
+        SDELMA:      School District (Elementary)/Remainder Code
+        SDSEC:       School District (Secondary)/Remainder Name
+        SDSECA:      School District (Secondary)/Remainder Code
+        SDUNI:       School District (Unified)/Remainder Name
+        SDUNIA:      School District (Unified)/Remainder Code
+        PUMA5A:      Public Use Microdata Sample Area (PUMA) Code
+        BTTRA:       Tribal Census Tract Code
+        BTBGA:       Tribal Block Group Code
+ 
+Data Type (E):
+    Estimates
+ 
+        NAME_E:      Area Name
+ 
+    Table 1:     Total Population
+    Universe:    Total population
+    Source code: B01003
+    NHGIS code:  UEP
+        UEPE001:     Total
+ 
+    Table 2:     Race
+    Universe:    Total population
+    Source code: B02001
+    NHGIS code:  UEQ
+        UEQE001:     Total
+        UEQE002:     White alone
+        UEQE003:     Black or African American alone
+        UEQE004:     American Indian and Alaska Native alone
+        UEQE005:     Asian alone
+        UEQE006:     Native Hawaiian and Other Pacific Islander alone
+        UEQE007:     Some other race alone
+        UEQE008:     Two or more races
+        UEQE009:     Two or more races: Two races including Some other race
+        UEQE010:     Two or more races: Two races excluding Some other race, and three or more races
+ 
+    Table 3:     Hispanic or Latino Origin
+    Universe:    Total population
+    Source code: B03003
+    NHGIS code:  UEZ
+        UEZE001:     Total
+        UEZE002:     Not Hispanic or Latino
+        UEZE003:     Hispanic or Latino
+ 
+    Table 4:     Educational Attainment for the Population 25 Years and Over
+    Universe:    Population 25 years and over
+    Source code: B15003
+    NHGIS code:  UGS
+        UGSE001:     Total
+        UGSE002:     No schooling completed
+        UGSE003:     Nursery school
+        UGSE004:     Kindergarten
+        UGSE005:     1st grade
+        UGSE006:     2nd grade
+        UGSE007:     3rd grade
+        UGSE008:     4th grade
+        UGSE009:     5th grade
+        UGSE010:     6th grade
+        UGSE011:     7th grade
+        UGSE012:     8th grade
+        UGSE013:     9th grade
+        UGSE014:     10th grade
+        UGSE015:     11th grade
+        UGSE016:     12th grade, no diploma
+        UGSE017:     Regular high school diploma
+        UGSE018:     GED or alternative credential
+        UGSE019:     Some college, less than 1 year
+        UGSE020:     Some college, 1 or more years, no degree
+        UGSE021:     Associate's degree
+        UGSE022:     Bachelor's degree
+        UGSE023:     Master's degree
+        UGSE024:     Professional school degree
+        UGSE025:     Doctorate degree
+ 
+    Table 5:     Ratio of Income to Poverty Level in the Past 12 Months
+    Universe:    Population for whom poverty status is determined
+    Source code: C17002
+    NHGIS code:  UG7
+        UG7E001:     Total
+        UG7E002:     Under .50
+        UG7E003:     .50 to .99
+        UG7E004:     1.00 to 1.24
+        UG7E005:     1.25 to 1.49
+        UG7E006:     1.50 to 1.84
+        UG7E007:     1.85 to 1.99
+        UG7E008:     2.00 and over
+ 
+    Table 6:     Gini Index of Income Inequality
+    Universe:    Households
+    Source code: B19083
+    NHGIS code:  UIL
+        UILE001:     Gini Index
+ 
+    Table 7:     Per Capita Income in the Past 12 Months (in 2013 Inflation-Adjusted Dollars)
+    Universe:    Total population
+    Source code: B19301
+    NHGIS code:  UJA
+        UJAE001:     Per capita income in the past 12 months (in 2013 inflation-adjusted dollars)
+ 
+    Table 8:     Employment Status for the Population 16 Years and Over
+    Universe:    Population 16 years and over
+    Source code: B23025
+    NHGIS code:  UJ8
+        UJ8E001:     Total
+        UJ8E002:     In labor force
+        UJ8E003:     In labor force: Civilian labor force
+        UJ8E004:     In labor force: Civilian labor force: Employed
+        UJ8E005:     In labor force: Civilian labor force: Unemployed
+        UJ8E006:     In labor force: Armed Forces
+        UJ8E007:     Not in labor force
+ 
+Data Type (M):
+    Margins of error
+ 
+        NAME_M:      Area Name
+ 
+    Table 1:     Total Population
+    Universe:    Total population
+    Source code: B01003
+    NHGIS code:  UEP
+        UEPM001:     Total
+ 
+    Table 2:     Race
+    Universe:    Total population
+    Source code: B02001
+    NHGIS code:  UEQ
+        UEQM001:     Total
+        UEQM002:     White alone
+        UEQM003:     Black or African American alone
+        UEQM004:     American Indian and Alaska Native alone
+        UEQM005:     Asian alone
+        UEQM006:     Native Hawaiian and Other Pacific Islander alone
+        UEQM007:     Some other race alone
+        UEQM008:     Two or more races
+        UEQM009:     Two or more races: Two races including Some other race
+        UEQM010:     Two or more races: Two races excluding Some other race, and three or more races
+ 
+    Table 3:     Hispanic or Latino Origin
+    Universe:    Total population
+    Source code: B03003
+    NHGIS code:  UEZ
+        UEZM001:     Total
+        UEZM002:     Not Hispanic or Latino
+        UEZM003:     Hispanic or Latino
+ 
+    Table 4:     Educational Attainment for the Population 25 Years and Over
+    Universe:    Population 25 years and over
+    Source code: B15003
+    NHGIS code:  UGS
+        UGSM001:     Total
+        UGSM002:     No schooling completed
+        UGSM003:     Nursery school
+        UGSM004:     Kindergarten
+        UGSM005:     1st grade
+        UGSM006:     2nd grade
+        UGSM007:     3rd grade
+        UGSM008:     4th grade
+        UGSM009:     5th grade
+        UGSM010:     6th grade
+        UGSM011:     7th grade
+        UGSM012:     8th grade
+        UGSM013:     9th grade
+        UGSM014:     10th grade
+        UGSM015:     11th grade
+        UGSM016:     12th grade, no diploma
+        UGSM017:     Regular high school diploma
+        UGSM018:     GED or alternative credential
+        UGSM019:     Some college, less than 1 year
+        UGSM020:     Some college, 1 or more years, no degree
+        UGSM021:     Associate's degree
+        UGSM022:     Bachelor's degree
+        UGSM023:     Master's degree
+        UGSM024:     Professional school degree
+        UGSM025:     Doctorate degree
+ 
+    Table 5:     Ratio of Income to Poverty Level in the Past 12 Months
+    Universe:    Population for whom poverty status is determined
+    Source code: C17002
+    NHGIS code:  UG7
+        UG7M001:     Total
+        UG7M002:     Under .50
+        UG7M003:     .50 to .99
+        UG7M004:     1.00 to 1.24
+        UG7M005:     1.25 to 1.49
+        UG7M006:     1.50 to 1.84
+        UG7M007:     1.85 to 1.99
+        UG7M008:     2.00 and over
+ 
+    Table 6:     Gini Index of Income Inequality
+    Universe:    Households
+    Source code: B19083
+    NHGIS code:  UIL
+        UILM001:     Gini Index
+ 
+    Table 7:     Per Capita Income in the Past 12 Months (in 2013 Inflation-Adjusted Dollars)
+    Universe:    Total population
+    Source code: B19301
+    NHGIS code:  UJA
+        UJAM001:     Per capita income in the past 12 months (in 2013 inflation-adjusted dollars)
+ 
+    Table 8:     Employment Status for the Population 16 Years and Over
+    Universe:    Population 16 years and over
+    Source code: B23025
+    NHGIS code:  UJ8
+        UJ8M001:     Total
+        UJ8M002:     In labor force
+        UJ8M003:     In labor force: Civilian labor force
+        UJ8M004:     In labor force: Civilian labor force: Employed
+        UJ8M005:     In labor force: Civilian labor force: Unemployed
+        UJ8M006:     In labor force: Armed Forces
+        UJ8M007:     Not in labor force
+ 
+--------------------------------------------------------------------------------
+Citation and Use of NHGIS Data
+--------------------------------------------------------------------------------
+ 
+All persons are granted a limited license to use this documentation and the
+accompanying data, subject to the following conditions:
+
+* Publications and research reports employing NHGIS data (either tabular or GIS)
+  must cite it appropriately. The citation should include the following:
+
+    Minnesota Population Center. National Historical Geographic Information
+    System: Version 2.0. Minneapolis, MN: University of Minnesota 2011.
+
+* Publications and research reports employing school attendance areas data
+  (either tabular or GIS) must cite it appropriately. The citation should
+  include the following:
+
+    The College of William and Mary and the Minnesota Population Center.
+    School Attendance Boundary Information System (SABINS): Version 1.0.
+    Minneapolis, MN: University of Minnesota 2011.
+
+* If possible, citations should also include the URL for the NHGIS site:
+
+    https://www.nhgis.org/
+
+* If possible, citations involving school attendance areas should also include
+  the URL for the SABINS site:
+
+    http://www.sabinsdata.org/
+
+In addition, we request that users send us a copy of any publications, research
+reports, or educational material making use of the data or documentation.
+Printed matter should be sent to:
+
+    NHGIS
+    Minnesota Population Center
+    University of Minnesota
+    50 Willey Hall
+    225 19th Ave S
+    Minneapolis, MN 55455
+
+Send electronic material to: nhgis@umn.edu
