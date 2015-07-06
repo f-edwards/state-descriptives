@@ -1,7 +1,6 @@
 ##### motivates selection - provide context - political data? voteshare -
 
 rm(list=ls())
-library(rgdal)
 library(ggplot2)
 library(RColorBrewer)
 library(maps)
