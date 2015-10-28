@@ -30,6 +30,7 @@ dat1$STATE<-tolower(dat1$STATE)
 dat1$COUNTY<-tolower(dat1$COUNTY)
 names(dat1)[9]<-"id"
 dat1$id<-as.character(strsplit(dat1$id, " county"))
+dat1$id<-gsub("[.]", "", dat1$id)
   
 names(dat1)[which(names(dat1)=="UEQE001")]<-"tot.pop"
 names(dat1)[which(names(dat1)=="UEQE002")]<-"white.pop"
