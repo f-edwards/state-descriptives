@@ -8,7 +8,7 @@ library(rgdal)
 library(dplyr)
 
 setwd("~/state-descriptives")
-setwd("C:/Users/frankalready/Dropbox/state-descriptives")
+setwd("C:/Users/frankalready/state-descriptives")
 
 returnquant<-function(x){
   l<-9 ### number of quantiles
