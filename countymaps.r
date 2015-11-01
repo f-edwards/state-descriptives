@@ -201,19 +201,27 @@ for(i in 1:length(states)){
 }
 
 print.xtable(s.tab[[1]], file="WA-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[2]], file="CA-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[3]], file="TX-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[4]], file="IL-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[5]], file="MN-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[6]], file="MO-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[7]], file="GA-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 print.xtable(s.tab[[8]], file="NY-tab.tex", 
-  include.rownames=FALSE)
+  include.rownames=FALSE, tabular.environment='longtable',
+  floating=FALSE)
 
