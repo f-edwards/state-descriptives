@@ -153,6 +153,11 @@ for(i in 1:length(states)){
    "% Latino Pop", "Poverty Rate", "Gini"))
 
   county_map <- map_data("county", states[i])
+  if(states[i]=="illinois"){
+    county_map$subregion<-ifelse(county_map$subregion=="de kalb", "dekalb", county_map$subregion)
+    county_map$subregion<-ifelse(county_map$subregion=="du page", "dupage", county_map$subregion)
+    county_map$subregion<-ifelse(county_map$subregion=="la salle", "lasalle", county_map$subregion)
+  }
   choro<-merge(county_map, map.dat, by="subregion")
   choro <- choro[order(choro$order), ]
 
@@ -175,15 +180,18 @@ for(i in 1:length(states)){
 
 ggsave(plot=MapPlot[[1]], "WAmap.pdf", h=8, w=9)
 ggsave(plot=MapPlot[[2]], "CAmap.pdf", h=8, w=6)
-ggsave(plot=MapPlot[[3]], "TXmap.pdf", h=8, w=8)
-ggsave(plot=MapPlot[[4]], "ILmap.pdf", h=8, w=5)
-ggsave(plot=MapPlot[[5]], "MNmap.pdf", h=8, w=6.5)
-ggsave(plot=MapPlot[[6]], "MOmap.pdf", h=8, w=8)
-ggsave(plot=MapPlot[[7]], "GAmap.pdf", h=8, w=7)
+ggsave(plot=MapPlot[[3]], "TXmap.pdf", h=8, w=7)
+ggsave(plot=MapPlot[[4]], "ILmap.pdf", h=8, w=4.5)
+ggsave(plot=MapPlot[[5]], "MNmap.pdf", h=8, w=5.7)
+ggsave(plot=MapPlot[[6]], "MOmap.pdf", h=8, w=7)
+ggsave(plot=MapPlot[[7]], "GAmap.pdf", h=8, w=6.5)
 ggsave(plot=MapPlot[[8]], "NYmap.pdf", h=8, w=8)
 
 
 ### Make state tables 
+captions<-c("Washington Counties", "California Counties",
+  "Texas Counties", "Illinois Counties", "Minnesota Counties",
+  "Missouri Counties", "Georgia Counties", "New York Counties")
 
 s.tab<-list()
 for(i in 1:length(states)){
@@ -197,7 +205,8 @@ for(i in 1:length(states)){
   names(s.dat[[i]])<-c("State","County", "Total Pop", "Gini", 
     "Per Cap Income", "R Pres Vote '12", "Pov Rt", 
     "Unemp Rt", "Pct Black Pop", "Pct Latino Pop")
-  s.tab[[i]]<-xtable(s.dat[[i]][,2:ncol(s.dat[[i]])])
+  s.tab[[i]]<-xtable(s.dat[[i]][,2:ncol(s.dat[[i]])], 
+    caption=captions[i], caption.placement="top")
 }
 
 print.xtable(s.tab[[1]], file="WA-tab.tex", 
