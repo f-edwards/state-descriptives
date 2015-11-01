@@ -6,10 +6,10 @@ library(RColorBrewer)
 library(maps)
 library(rgdal)
 library(dplyr)
+library(mapproj)
 
-setwd("~/state-descriptives")
+#setwd("~/state-descriptives")
 setwd("C:/Users/frankalready/state-descriptives")
-
 
 returnquant<-function(x){
   l<-9 ### number of quantiles
@@ -22,16 +22,85 @@ returnquant<-function(x){
     return(as.factor(quant))
 }
 
+cleanstate<-function(x){
+  x$STATE<-ifelse((x$State=="AL"),"Alabama", x$STATE)
+  x$STATE<-ifelse((x$State=="AK"),"Alaska", x$STATE)
+  x$STATE<-ifelse((x$State=="AZ"),"Arizona", x$STATE)
+  x$STATE<-ifelse((x$State=="AR"),"Arkansas", x$STATE)
+  x$STATE<-ifelse((x$State=="CA"),"California", x$STATE)
+  x$STATE<-ifelse((x$State=="CO"),"Colorado", x$STATE)
+  x$STATE<-ifelse((x$State=="CT"),"Connecticut", x$STATE)
+  x$STATE<-ifelse((x$State=="DE"),"Delaware", x$STATE)
+  x$STATE<-ifelse((x$State=="DC"),"District of Columbia", x$STATE)
+  x$STATE<-ifelse((x$State=="FL"),"Florida", x$STATE)
+  x$STATE<-ifelse((x$State=="GA"),"Georgia", x$STATE)
+  x$STATE<-ifelse((x$State=="HI"),"Hawaii", x$STATE)
+  x$STATE<-ifelse((x$State=="ID"),"Idaho", x$STATE)
+  x$STATE<-ifelse((x$State=="IL"),"Illinois", x$STATE)
+  x$STATE<-ifelse((x$State=="IN"),"Indiana", x$STATE)
+  x$STATE<-ifelse((x$State=="IA"),"Iowa", x$STATE)
+  x$STATE<-ifelse((x$State=="KS"),"Kansas", x$STATE)
+  x$STATE<-ifelse((x$State=="KY"),"Kentucky", x$STATE)
+  x$STATE<-ifelse((x$State=="LA"),"Louisiana", x$STATE)
+  x$STATE<-ifelse((x$State=="ME"),"Maine", x$STATE)
+  x$STATE<-ifelse((x$State=="MD"),"Maryland", x$STATE)
+  x$STATE<-ifelse((x$State=="MA"),"Massachusetts", x$STATE)
+  x$STATE<-ifelse((x$State=="MI"),"Michigan", x$STATE)
+  x$STATE<-ifelse((x$State=="MN"),"Minnesota", x$STATE)
+  x$STATE<-ifelse((x$State=="MS"),"Mississippi", x$STATE)
+  x$STATE<-ifelse((x$State=="MO"),"Missouri", x$STATE)
+  x$STATE<-ifelse((x$State=="MT"),"Montana", x$STATE)
+  x$STATE<-ifelse((x$State=="NE"),"Nebraska", x$STATE)
+  x$STATE<-ifelse((x$State=="NV"),"Nevada", x$STATE)
+  x$STATE<-ifelse((x$State=="NH"),"New Hampshire", x$STATE)
+  x$STATE<-ifelse((x$State=="NJ"),"New Jersey", x$STATE)
+  x$STATE<-ifelse((x$State=="NM"),"New Mexico", x$STATE)
+  x$STATE<-ifelse((x$State=="NY"),"New York", x$STATE)
+  x$STATE<-ifelse((x$State=="NC"),"North Carolina", x$STATE)
+  x$STATE<-ifelse((x$State=="ND"),"North Dakota", x$STATE)
+  x$STATE<-ifelse((x$State=="OH"),"Ohio", x$STATE)
+  x$STATE<-ifelse((x$State=="OK"),"Oklahoma", x$STATE)
+  x$STATE<-ifelse((x$State=="OR"),"Oregon", x$STATE)
+  x$STATE<-ifelse((x$State=="PA"),"Pennsylvania", x$STATE)
+  x$STATE<-ifelse((x$State=="RI"),"Rhode Island", x$STATE)
+  x$STATE<-ifelse((x$State=="SC"),"South Carolina", x$STATE)
+  x$STATE<-ifelse((x$State=="SD"),"South Dakota", x$STATE)
+  x$STATE<-ifelse((x$State=="TN"),"Tennessee", x$STATE)
+  x$STATE<-ifelse((x$State=="TX"),"Texas", x$STATE)
+  x$STATE<-ifelse((x$State=="UT"),"Utah", x$STATE)
+  x$STATE<-ifelse((x$State=="VT"),"Vermont", x$STATE)
+  x$STATE<-ifelse((x$State=="VA"),"Virginia", x$STATE)
+  x$STATE<-ifelse((x$State=="WA"),"Washington", x$STATE)
+  x$STATE<-ifelse((x$State=="WV"),"West Virginia", x$STATE)
+  x$STATE<-ifelse((x$State=="WI"),"Wisconsin", x$STATE)
+  x$STATE<-ifelse((x$State=="WY"),"Wyoming", x$STATE)
+  x$STATE<-ifelse((x$State=="PR"), "Puerto Rico", x$STATE)
+  x$STATE<-tolower(x$STATE)
+  return(x)
+}
 
-
+### pop data from NHGIS
 dat1<-read.csv("nhgis0014_ds201_20135_2013_county.csv", head=TRUE)
+### 2012 election data from http://www.theguardian.com/news/datablog/2012/nov/07/us-2012-election-county-results-download
+dat2<-read.csv("pres2012.csv", head=TRUE)
 
 dat1$STATE<-tolower(dat1$STATE)
-dat1$COUNTY<-tolower(dat1$COUNTY)
-names(dat1)[9]<-"id"
+dat1$id<-tolower(dat1$COUNTY)
 dat1$id<-as.character(strsplit(dat1$id, " county"))
 dat1$id<-gsub("[.]", "", dat1$id)
-  
+dat1$COUNTY<-as.character(strsplit(as.character(dat1$COUNTY), " County"))
+
+
+dat2$STATE<-NA
+dat2<-cleanstate(dat2)
+dat2$id<-tolower(dat2$County)
+dat2$id<-as.character(strsplit(dat2$id, " county"))
+dat2$id<-gsub("[.]", "", dat2$id)
+dat2<-dat2[-(which(dat2$FIPS==0)),]
+dat2$pct.rep2012<-dat2$RepVotes/dat2$TotVotes
+
+dat1<-merge(dat1, dat2, by=c("STATE", "id"))
+
 names(dat1)[which(names(dat1)=="UEQE001")]<-"tot.pop"
 names(dat1)[which(names(dat1)=="UEQE002")]<-"white.pop"
 names(dat1)[which(names(dat1)=="UEQE003")]<-"black.pop"
@@ -65,666 +134,86 @@ for(s in 1:length(states)){
   s.dat[[s]]<-dat1[dat1$STATE==states[s],]
  }
 
+MapPlot<-list()
+
+for(i in 1:length(states)){
+
+  n<-nrow(s.dat[[i]])
+  map.dat<-with(s.dat[[i]], 
+    data.frame(
+      region=rep(STATE, 6),
+      subregion=rep(id, 6),
+      q=as.factor(c(returnquant(tot.pop), returnquant(pct.rep2012), returnquant(pctblk), 
+        returnquant(pctlat), returnquant(pov.rt), returnquant(gini))),
+      c=c(rep("Total Population",n), rep("% R Pres Vote 2012",n), rep("% Black Pop",n), 
+        rep("% Latino Pop",n), rep("Poverty Rate",n), rep("Gini",n))
+    ))
+
+  map.dat$c<-factor(map.dat$c, levels=c("Total Population", "% R Pres Vote 2012","% Black Pop",
+   "% Latino Pop", "Poverty Rate", "Gini"))
+
+  county_map <- map_data("county", states[i])
+  choro<-merge(county_map, map.dat, by="subregion")
+  choro <- choro[order(choro$order), ]
+
+  MapPlot[[i]] <- ggplot(choro,
+   aes(x = long, y = lat, group = group, fill = q)) +
+   geom_polygon(aes(fill = q), colour = "black") +
+    scale_fill_brewer(palette = "Blues", labels=c("Lowest 10%","", "", "", "", "", "", " ", "Highest 10%"),
+      name=" ") +
+  theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
+    panel.border = element_blank(), panel.background=element_blank())+
+  scale_y_continuous(name="", breaks=NULL) +
+  scale_x_continuous(name="", breaks=NULL) +
+  theme(strip.background=element_blank(), 
+    strip.text.x=element_text(size=10),
+    strip.text.y=element_blank())+
+  xlab(NULL) + ylab(NULL)+
+  facet_wrap(~c, ncol=2)
+
+}
+
+ggsave(plot=MapPlot[[1]], "WAmap.pdf", h=8, w=9)
+ggsave(plot=MapPlot[[2]], "CAmap.pdf", h=8, w=6)
+ggsave(plot=MapPlot[[3]], "TXmap.pdf", h=8, w=8)
+ggsave(plot=MapPlot[[4]], "ILmap.pdf", h=8, w=5)
+ggsave(plot=MapPlot[[5]], "MNmap.pdf", h=8, w=6.5)
+ggsave(plot=MapPlot[[6]], "MOmap.pdf", h=8, w=8)
+ggsave(plot=MapPlot[[7]], "GAmap.pdf", h=8, w=7)
+ggsave(plot=MapPlot[[8]], "NYmap.pdf", h=8, w=8)
+
+
+### Make state tables 
+
+s.tab<-list()
+for(i in 1:length(states)){
+  s.dat[[i]]<-s.dat[[i]]%>%
+  select(., STATE, COUNTY, tot.pop, gini, per.cap.inc, pct.rep2012, pov.rt, unemp.rt, pctblk, pctlat)
+  s.dat[[i]]$pct.rep2012<-s.dat[[i]]$pct.rep2012*100
+  s.dat[[i]]$pov.rt<-s.dat[[i]]$pov.rt*100
+  s.dat[[i]]$unemp.rt<-s.dat[[i]]$unemp.rt*100
+  s.dat[[i]]$pctblk<-s.dat[[i]]$pctblk*100
+  s.dat[[i]]$pctlat<-s.dat[[i]]$pctlat*100
+  names(s.dat[[i]])<-c("State","County", "Total Pop", "Gini", 
+    "Per Cap Income", "R Pres Vote '12", "Pov Rt", 
+    "Unemp Rt", "Pct Black Pop", "Pct Latino Pop")
+  s.tab[[i]]<-xtable(s.dat[[i]][,2:ncol(s.dat[[i]])])
+}
+
+print.xtable(s.tab[[1]], file="WA-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[2]], file="CA-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[3]], file="TX-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[4]], file="IL-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[5]], file="MN-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[6]], file="MO-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[7]], file="GA-tab.tex", 
+  include.rownames=FALSE)
+print.xtable(s.tab[[8]], file="NY-tab.tex", 
+  include.rownames=FALSE)
 
-county_map <- map_data("county", "washington")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[1]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[1]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[1]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[1]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[1]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[1]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="WApctblk.pdf", plot=map.pctblk)
-ggsave(filename="WApctlat.pdf", plot=map.pctlat)
-ggsave(filename="WAgini.pdf", plot=map.gini)
-ggsave(filename="WApcincome.pdf", plot=map.inc)
-ggsave(filename="WAunemp.pdf", plot=map.unemp)
-ggsave(filename="WApov.pdf", plot=map.pov)
-
-
-county_map <- map_data("county", "california")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[2]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[2]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[2]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[2]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[2]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[2]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="CApctblk.pdf", plot=map.pctblk)
-ggsave(filename="CApctlat.pdf", plot=map.pctlat)
-ggsave(filename="CAgini.pdf", plot=map.gini)
-ggsave(filename="CApcincome.pdf", plot=map.inc)
-ggsave(filename="CAunemp.pdf", plot=map.unemp)
-ggsave(filename="CApov.pdf", plot=map.pov)
-
-
-county_map <- map_data("county", "texas")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[3]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[3]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[3]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[3]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[3]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[3]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="TXpctblk.pdf", plot=map.pctblk)
-ggsave(filename="TXpctlat.pdf", plot=map.pctlat)
-ggsave(filename="TXgini.pdf", plot=map.gini)
-ggsave(filename="TXpcincome.pdf", plot=map.inc)
-ggsave(filename="TXunemp.pdf", plot=map.unemp)
-ggsave(filename="TXpov.pdf", plot=map.pov)
-
-
-county_map <- map_data("county", "illinois")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[4]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[4]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[4]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[4]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[4]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[4]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="ILpctblk.pdf", plot=map.pctblk)
-ggsave(filename="ILpctlat.pdf", plot=map.pctlat)
-ggsave(filename="ILgini.pdf", plot=map.gini)
-ggsave(filename="ILpcincome.pdf", plot=map.inc)
-ggsave(filename="ILunemp.pdf", plot=map.unemp)
-ggsave(filename="ILpov.pdf", plot=map.pov)
-
-
-county_map <- map_data("county", "minnesota")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[5]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[5]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[5]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[5]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[5]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[5]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="MNpctblk.pdf", plot=map.pctblk)
-ggsave(filename="MNpctlat.pdf", plot=map.pctlat)
-ggsave(filename="MNgini.pdf", plot=map.gini)
-ggsave(filename="MNpcincome.pdf", plot=map.inc)
-ggsave(filename="MNunemp.pdf", plot=map.unemp)
-ggsave(filename="MNpov.pdf", plot=map.pov)
-
-
-county_map <- map_data("county", "missouri")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[6]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[6]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[6]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[6]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[6]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[6]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="MOpctblk.pdf", plot=map.pctblk)
-ggsave(filename="MOpctlat.pdf", plot=map.pctlat)
-ggsave(filename="MOgini.pdf", plot=map.gini)
-ggsave(filename="MOpcincome.pdf", plot=map.inc)
-ggsave(filename="MOunemp.pdf", plot=map.unemp)
-ggsave(filename="MOpov.pdf", plot=map.pov)
-
-
-county_map <- map_data("county", "georgia")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[7]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[7]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[7]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[7]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[7]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[7]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="GApctblk.pdf", plot=map.pctblk)
-ggsave(filename="GApctlat.pdf", plot=map.pctlat)
-ggsave(filename="GAgini.pdf", plot=map.gini)
-ggsave(filename="GApcincome.pdf", plot=map.inc)
-ggsave(filename="GAunemp.pdf", plot=map.unemp)
-ggsave(filename="GApov.pdf", plot=map.pov)
-
-s.dat[[8]]$id[45]<-"st lawrence"
-county_map <- map_data("county", "new york")
-names(county_map)[5:6] <- c("state", "id")
-
-map.pctblk <- ggplot(s.dat[[8]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctblk)), 
-            colour = "black") + ggtitle("Percent Black Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pctlat <- ggplot(s.dat[[8]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pctlat)), 
-            colour = "black") + ggtitle("Percent Latino Population in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.gini <- ggplot(s.dat[[8]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(gini)), 
-            colour = "black") + ggtitle("Gini in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.inc <- ggplot(s.dat[[8]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(per.cap.inc)), 
-            colour = "black") + ggtitle("Per Capita Income in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.pov <- ggplot(s.dat[[8]])+
-   geom_map( map = county_map, aes(map_id = id,fill = returnquant(pov.rt)), 
-            colour = "black") + ggtitle("Poverty Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())
-
-map.unemp <- ggplot(s.dat[[8]]) +
-  geom_map( map = county_map, aes(map_id = id,fill = returnquant(unemp.rt)), 
-            colour = "black") + ggtitle("Unemployment Rate in Deciles") + coord_map() +
-  expand_limits(x = county_map$long, y = county_map$lat)+
-    theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(),
-    panel.border = element_blank(), panel.background=element_blank(), axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank())+
-  scale_fill_brewer(palette="Blues", labels=c("Lowest 10%", " ", " ", " ", " ", " ", " ", " ", "Top 10%"),
-    name=" ")
-
-ggsave(filename="NYpctblk.pdf", plot=map.pctblk)
-ggsave(filename="NYpctlat.pdf", plot=map.pctlat)
-ggsave(filename="NYgini.pdf", plot=map.gini)
-ggsave(filename="NYpcincome.pdf", plot=map.inc)
-ggsave(filename="NYunemp.pdf", plot=map.unemp)
-ggsave(filename="NYpov.pdf", plot=map.pov)
