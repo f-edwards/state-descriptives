@@ -7,6 +7,7 @@ library(maps)
 library(rgdal)
 library(dplyr)
 library(mapproj)
+library(xtable)
 
 #setwd("~/state-descriptives")
 setwd("C:/Users/frankalready/state-descriptives")
@@ -92,12 +93,22 @@ dat1$COUNTY<-as.character(strsplit(as.character(dat1$COUNTY), " County"))
 
 
 dat2$STATE<-NA
+dat2$State<-dat2$State.Postal
 dat2<-cleanstate(dat2)
+dat2$County<-dat2$County.Name
 dat2$id<-tolower(dat2$County)
 dat2$id<-as.character(strsplit(dat2$id, " county"))
 dat2$id<-gsub("[.]", "", dat2$id)
 dat2<-dat2[-(which(dat2$FIPS==0)),]
-dat2$pct.rep2012<-dat2$RepVotes/dat2$TotVotes
+
+dat2$RepVotes<-NA
+dat2$RepVotes<-(with(dat2, ifelse(Party=="GOP", Votes,
+  ifelse(Party.1=="GOP", Votes.1, 
+    ifelse(Party.2=="GOP", Votes.2,
+    ifelse(Party.3=="GOP", Votes.3, 
+    ifelse(Party.4=="GOP", Votes.4, RepVotes
+    )))))))
+dat2$pct.rep2012<-dat2$RepVotes/dat2$TOTAL.VOTES.CAST
 
 dat1<-merge(dat1, dat2, by=c("STATE", "id"))
 
@@ -153,11 +164,9 @@ for(i in 1:length(states)){
    "% Latino Pop", "Poverty Rate", "Gini"))
 
   county_map <- map_data("county", states[i])
-  if(states[i]=="illinois"){
     county_map$subregion<-ifelse(county_map$subregion=="de kalb", "dekalb", county_map$subregion)
     county_map$subregion<-ifelse(county_map$subregion=="du page", "dupage", county_map$subregion)
     county_map$subregion<-ifelse(county_map$subregion=="la salle", "lasalle", county_map$subregion)
-  }
   choro<-merge(county_map, map.dat, by="subregion")
   choro <- choro[order(choro$order), ]
 
