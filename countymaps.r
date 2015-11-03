@@ -217,7 +217,9 @@ for(i in 1:length(states)){
   s.tab[[i]]<-xtable(s.dat[[i]][,2:ncol(s.dat[[i]])], 
     caption=captions[i], caption.placement="top")
 }
-
+s.out<-rbind(s.dat[[1]], s.dat[[2]], s.dat[[3]], s.dat[[4]], 
+  s.dat[[5]], s.dat[[6]], s.dat[[7]], s.dat[[8]])
+write.csv(s.out, "county.descriptives.csv")
 print.xtable(s.tab[[1]], file="WA-tab.tex", 
   include.rownames=FALSE, tabular.environment='longtable',
   floating=FALSE)
