@@ -197,51 +197,51 @@ ggsave(plot=MapPlot[[7]], "GAmap.pdf", h=8, w=6.5)
 ggsave(plot=MapPlot[[8]], "NYmap.pdf", h=8, w=8)
 
 
-### Make state tables 
-captions<-c("Washington Counties", "California Counties",
-  "Texas Counties", "Illinois Counties", "Minnesota Counties",
-  "Missouri Counties", "Georgia Counties", "New York Counties")
+# ### Make state tables 
+# captions<-c("Washington Counties", "California Counties",
+#   "Texas Counties", "Illinois Counties", "Minnesota Counties",
+#   "Missouri Counties", "Georgia Counties", "New York Counties")
 
-s.tab<-list()
-for(i in 1:length(states)){
-  s.dat[[i]]<-s.dat[[i]]%>%
-  select(., STATE, COUNTY, tot.pop, gini, per.cap.inc, pct.rep2012, pov.rt, unemp.rt, pctblk, pctlat)
-  s.dat[[i]]$pct.rep2012<-s.dat[[i]]$pct.rep2012*100
-  s.dat[[i]]$pov.rt<-s.dat[[i]]$pov.rt*100
-  s.dat[[i]]$unemp.rt<-s.dat[[i]]$unemp.rt*100
-  s.dat[[i]]$pctblk<-s.dat[[i]]$pctblk*100
-  s.dat[[i]]$pctlat<-s.dat[[i]]$pctlat*100
-  names(s.dat[[i]])<-c("State","County", "Total Pop", "Gini", 
-    "Per Cap Income", "R Pres Vote '12", "Pov Rt", 
-    "Unemp Rt", "Pct Black Pop", "Pct Latino Pop")
-  s.tab[[i]]<-xtable(s.dat[[i]][,2:ncol(s.dat[[i]])], 
-    caption=captions[i], caption.placement="top")
-}
-s.out<-rbind(s.dat[[1]], s.dat[[2]], s.dat[[3]], s.dat[[4]], 
-  s.dat[[5]], s.dat[[6]], s.dat[[7]], s.dat[[8]])
-write.csv(s.out, "county.descriptives.csv")
-print.xtable(s.tab[[1]], file="WA-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[2]], file="CA-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[3]], file="TX-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[4]], file="IL-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[5]], file="MN-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[6]], file="MO-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[7]], file="GA-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
-print.xtable(s.tab[[8]], file="NY-tab.tex", 
-  include.rownames=FALSE, tabular.environment='longtable',
-  floating=FALSE)
+# s.tab<-list()
+# for(i in 1:length(states)){
+#   s.dat[[i]]<-s.dat[[i]]%>%
+#   select(., STATE, COUNTY, tot.pop, gini, per.cap.inc, pct.rep2012, pov.rt, unemp.rt, pctblk, pctlat)
+#   s.dat[[i]]$pct.rep2012<-s.dat[[i]]$pct.rep2012*100
+#   s.dat[[i]]$pov.rt<-s.dat[[i]]$pov.rt*100
+#   s.dat[[i]]$unemp.rt<-s.dat[[i]]$unemp.rt*100
+#   s.dat[[i]]$pctblk<-s.dat[[i]]$pctblk*100
+#   s.dat[[i]]$pctlat<-s.dat[[i]]$pctlat*100
+#   names(s.dat[[i]])<-c("State","County", "Total Pop", "Gini", 
+#     "Per Cap Income", "R Pres Vote '12", "Pov Rt", 
+#     "Unemp Rt", "Pct Black Pop", "Pct Latino Pop")
+#   s.tab[[i]]<-xtable(s.dat[[i]][,2:ncol(s.dat[[i]])], 
+#     caption=captions[i], caption.placement="top")
+# }
+# s.out<-rbind(s.dat[[1]], s.dat[[2]], s.dat[[3]], s.dat[[4]], 
+#   s.dat[[5]], s.dat[[6]], s.dat[[7]], s.dat[[8]])
+# write.csv(s.out, "county.descriptives.csv")
+# print.xtable(s.tab[[1]], file="WA-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[2]], file="CA-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[3]], file="TX-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[4]], file="IL-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[5]], file="MN-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[6]], file="MO-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[7]], file="GA-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
+# print.xtable(s.tab[[8]], file="NY-tab.tex", 
+#   include.rownames=FALSE, tabular.environment='longtable',
+#   floating=FALSE)
 
