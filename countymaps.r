@@ -23,6 +23,18 @@ returnquant<-function(x){
     return(as.factor(quant))
 }
 
+rq<-function(x,l){
+  require(gglpot2)
+  l<-9 ### number of quantiles
+  temp<-cut_number(x,l)
+  quant<-rep(NA, length(x))
+  for(i in (1:l)){
+    z<-which(levels(temp)[i]==temp)
+    quant[z]<-i
+    }
+    return(as.factor(quant))
+}
+
 cleanstate<-function(x){
   x$STATE<-ifelse((x$State=="AL"),"Alabama", x$STATE)
   x$STATE<-ifelse((x$State=="AK"),"Alaska", x$STATE)
@@ -137,6 +149,9 @@ dat1$pctblk<-with(dat1,
 
 dat1$pctlat<-with(dat1,
   dat1$latino.pop/dat1$tot.pop)
+
+dat1$pctwht<-with(dat1,
+  dat1$white.pop/dat1$tot.pop)
 
 states<-c("washington", "california", "texas", "illinois", 
   "minnesota", "missouri", "georgia", "new york")
